@@ -4,18 +4,18 @@ Welcome to RevanQuest_RPG! This is a text-based RPG set in the mystical realm of
 
 ## Overview
 
-RevanQuest_RPG is a C programming project that simulates an interactive text-based RPG. Players create their character, explore the realm of Eldoria, engage in battles, and unravel the mysteries of the Shadow Guild threatening the kingdom's peace.
+RevanQuest_RPG is a C programming project that simulates an interactive text-based (choose-your-own-adventure style) RPG. Players create their character, explore the realm of Eldoria, engage in battles, and unravel the mysteries of the Shadow Guild threatening the kingdom's peace.
 
 ## Gameplay
 
 - **Character Creation:** Players create their character by choosing a name and class (Saber, Assassin, or Caster).
 - **Attributes Allocation:** Distribute attribute points across strength, agility, wisdom, and charisma.
 - **Decision Making:** Navigate through decisions that shape the protagonist's path, including interactions with the king and responses to the kingdom's threats.
-- **Battles:** Engage in battles tailored to the chosen archetype's abilities (Saber, Assassin, or Caster).
+- **Battles:** Engage in battles tailored to the chosen class abilities
 
 ## Architecture
 
-The game is structured into modular functions, each handling specific aspects such as character creation, attribute allocation, decision making, and battle mechanics. Separate battle functions are implemented for each archetype, providing unique gameplay experiences.
+The game is structured into modular functions (later create separate game files), each handling specific aspects such as character creation, attribute allocation, decision making, and battle mechanics. Separate battle functions are implemented for each archetype, providing unique gameplay experiences.
 
 ## Future Enhancements
 
