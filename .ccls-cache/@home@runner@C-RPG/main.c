@@ -4,6 +4,13 @@
 #include <time.h>
 
 // Define a structure for characters
+struct chState {
+	int hp;  // Health points
+	int mp;  // Mana points
+	int xp;  // Experience points
+	int lvl; // Level
+};
+
 typedef struct Character {
 	char fName[16];
 	char lName[16];
@@ -12,9 +19,7 @@ typedef struct Character {
 	int agility;
 	int wisdom;
 	int charisma;
-	int hp; // Health points
-	int mp; // Mana points
-	int xp; // Experience points
+	struct chState state;
 } ch;
 
 // Function Prototype Declarations
@@ -40,11 +45,11 @@ int rollDice(int sides) {
 }
 
 // Battle Mechanics (will be updated in future)
-void battleswitch(int archetype);
-void rulerBattle();
-void saberBattle();
-void assassinBattle();
-void casterBattle();
+void battleswitch(int archetype, ch *player, ch *enemy);
+void rulerBattle(ch *player, ch *enemy);
+void saberBattle(ch *player, ch *enemy);
+void assassinBattle(ch *player, ch *enemy);
+void casterBattle(ch *player, ch *enemy);
 
 int main(void) {
 	printf("--------------------------------------------------------\n");
@@ -67,7 +72,12 @@ int main(void) {
 
 	//Decision 2
 	decision2(&choice[1], &player.strength, &player.agility, &player.wisdom, &player.charisma);
+
+	// Testing for Battle Mechanics
+	ch enemy = {"Shadow", "Member", 1, 10, 10, 10, 10, {50, 50, 0, 1}};
+	battleswitch(player.archetype, &player, &enemy);
 // . . . to be continued . . . //
+	
 	return 0;
 }
 // Function to handle Character Creation
@@ -78,6 +88,11 @@ void charCreation(ch *player) {
 	printf("Enter Your Character's Last Name : ");
 	scanf(" %15s", player->lName);
 	printf("\nYour Character's Name is %s %s\n", player->fName, player->lName);
+	player->state.hp = 100;
+	player->state.mp = 100;
+	player->state.xp = 0;
+	player->state.lvl = 1;
+	
 	// Class Selection
 	printf("\nChoose Your Character Class: \n");
 	printf(" 1. Saber\n 2. Assassin\n 3. Caster\n ");
@@ -158,7 +173,7 @@ void displayCharacter(char fName[16], char lName[16], int archetype, int strengt
 	printf("Wisdom: %d\n", wisdom);
 	printf("Charisma: %d\n", charisma);
 }
-// Function for the first Choice
+// Functions for the Choices
 void decision1( int choice[0], int *strength, int *agility, int *wisdom, int *charisma) {
 	printf("\nKing Eldor's gaze met your's as the you stepped into the throne room. The court felt eerie with silence, and you faced a pivotal decision.\n");
 	printf(" 1. Bow down respectfully to the king.\n 2. Keenly analyze the room and security measures.\n 3. Lock eyes the king, analyzing his body language and authority.\n");
@@ -196,7 +211,7 @@ void decision1( int choice[0], int *strength, int *agility, int *wisdom, int *ch
 }
 void decision2( int choice[1], int *strength, int *agility, int *wisdom, int *charisma) {
 	printf("\n You find yourself drawn into a shadowy conspiracy. The King reveals the existence of the Shadow Guild, an organization threatening Eldoria's peace. The burden of becoming a Revan, a defender against this darkness, falls upon you.\n");
-	printf(" 1. Bow down respectfully to the king.\n 2. Keenly analyze the room and security measures.\n 3. Lock eyes the king, analyzing his body language and authority.\n");
+	printf(" 1. Accept wholeheartedly.\n 2. Ask for Details.\n 3. Hesitate\n");
 	printf("\nEnter the number of your chosen action : ");
 	scanf(" %d", &choice[1]);
 	while(getchar() != '\n'); // Clear input buffer
@@ -230,57 +245,227 @@ void decision2( int choice[1], int *strength, int *agility, int *wisdom, int *ch
 		}
 	} while (choice[1] < 1 || choice[1] > 3);
 }
-void battleswitch(int archetype) {
+
+// Function to display character state
+void displayChState(ch *character) {
+	printf("Character: %s %s\n", character->fName, character->lName);
+	printf("Health Points: %d\n", character->state.hp);
+	printf("Mana Points: %d\n", character->state.mp);
+}
+
+void battleswitch(int archetype, ch *player, ch *enemy) {
 	switch (archetype) {
 		case 0:
-			rulerBattle();
+			printf("You are engaged in battle as a Ruler!\n");
+			rulerBattle(player, enemy);
 			return;
 		case 1:
-			saberBattle();
+			printf("You are engaged in battle as a Saber!\n");
+			saberBattle(player, enemy);
 			return;
 		case 2:
-			assassinBattle();
+			printf("You are engaged in battle as an Assassin!\n");
+			assassinBattle(player, enemy);
 			return;
 		case 3:
-			casterBattle();
+			printf("You are engaged in battle as a Caster!\n");
+			casterBattle(player, enemy);
 			return;
 		default:
 			return;
 	}
 }
+
 // Ruler battle function
-void rulerBattle() {
-	printf("You are engaged in battle as a Ruler!\n");
+void rulerBattle(ch *player, ch *enemy) {
 	// Need to implement Ruler-specific battle mechanics and options
-	// Example:
-	// - Attack: Deal physical damage
-	// - Heavy Strike: Deal high physical damage with a chance of lowering enemy defense
-	// - Defend: Increase defense for a turn
 }
+
 // Saber battle function
-void saberBattle() {
-	printf("You are engaged in battle as a Saber!\n");
-	// Need to implement Saber-specific battle mechanics and options
-	// Example:
-	// - Attack: Deal physical damage
-	// - Heavy Strike: Deal high physical damage with a chance of lowering enemy defense
-	// - Defend: Increase defense for a turn
+void saberBattle(ch *player, ch *enemy) {
+	while (/*player->state.hp > 0 &&*/ enemy->state.hp > 0) {
+		displayChState(player);
+		displayChState(enemy);
+		// Saber-specific battle options
+		printf("Available Moves:\n");
+		printf("1. Attack\n");
+		printf("2. Heavy Strike\n");
+		printf("3. Defend\n");
+		printf("4. Run\n");
+
+		int move;
+		printf("Enter your move: ");
+		scanf("%d", &move);
+
+		switch (move) {
+			// Attack: Deal physical damage
+			case 1: {
+				printf("You perform a quick attack!\n");
+				// Simulate damage dealt by the player
+				int damage = (player->strength * player->state.lvl) + rollDice(10);
+				printf("You deal %d damage!\n", damage);
+				enemy->state.hp -= damage;
+				break;
+			}
+			// Heavy Strike: Deal high physical damage
+			case 2: {
+				printf("You unleash a heavy strike!\n");
+				// Simulate damage dealt by the player
+				int damage = (player->strength * player->state.lvl) + rollDice(10);
+				printf("You deal %d damage!\n", damage);
+				enemy->state.hp -= damage;
+				break;
+			}
+			// Defence: Increase defense for a turn
+			case 3: {
+				printf("You adopt a defensive stance!\n");
+				// Simulate increased defence for the player
+				player->state.hp += rollDice(10);
+				printf("You defence increases!\n");
+				break;
+			}
+			// Run: Attempt to escape the battle
+			case 4: {
+				printf("You attempt to run away!\n");
+				// Simulate the player attempting to run away
+				if (rollDice(20) > 10) {
+					printf("You successfully escape the battle!\n");
+					return;
+				} else {
+					printf("You failed to escape the battle!\n");
+					break;
+				}
+			}
+			default:
+				printf("Your mind races, trying to decide your next move in the heat of battle.\n");
+				break;
+		}
+	}
+	// Now, call the battle function for the enemy, and it will call the battle function for the player again... (until one of the HP reaches 0)
 }
+
 // Assassin battle function
-void assassinBattle() {
-	printf("You are engaged in battle as an Assassin!\n");
-	// Need to implement Assassin-specific battle mechanics and options
-	// Example:
-	// - Attack: Deal physical damage
-	// - Backstab: Perform a critical hit with increased damage
-	// - Evasion: Increase evasion chance for a turn
+void assassinBattle(ch *player, ch *enemy) {
+	while (player->state.hp > 0 && enemy->state.hp > 0) {
+	displayChState(player);
+	displayChState(enemy);
+	// Assassin-specific battle options
+	printf("Available Tricks:\n");
+	printf("1. Slash\n");
+	printf("2. Backstab\n");
+	printf("3. Evasion\n");
+	printf("4. Vanish\n");
+
+	int move;
+	printf("Enter your move: ");
+	scanf("%d", &move);
+
+	switch (move) {
+		// Attack: Deal physical damage
+		case 1: {
+			printf("You perform a quick Slash!\n");
+			// Simulate damage dealt by the player
+			int damage = (player->agility * player->state.lvl) + rollDice(8);
+			printf("You deal %d damage!\n", damage);
+			enemy->state.hp -= damage;
+			break;
+		}
+		// Backstab: Perform a critical hit with increased damage
+		case 2: {
+			printf("You backstab your enemy!\n");
+			// Simulate damage dealt by the player
+			int damage = (player->agility * player->state.lvl) + rollDice(10);
+			printf("You deal %d damage!\n", damage);
+			enemy->state.hp -= damage;
+			break;
+		}
+		// Evasion: Try to Dodge the enemy's attack
+		case 3: {
+			printf("You swiftly roll sideways!\n");
+			// Simulate increased defence for the player
+			player->state.hp += rollDice(10);
+			printf("You successfully dodged!\n");
+			break;
+		}
+		// Vanish: Attempt to disappear and escape the battle
+		case 4: {
+			printf("You vanish midbattle\n");
+			// Simulate the player attempting to go stealth mode and just vanish
+			if (rollDice(20) > 10) {
+				printf("You successfully escape the battle!\n");
+				return;
+			} else {
+				printf("You failed to escape the battle!\n");
+				break;
+			}
+		}
+		default:
+			printf("Your mind races, trying to decide your next move in the heat of battle.\n");
+			break;
+	}
 }
+	// Now, call the battle function for the enemy, and it will call the battle function for the player again... (until one of the HP reaches 0)
+}
+
 // Caster battle function
-void casterBattle() {
-	printf("You are engaged in battle as a Caster!\n");
-	// Need to implement Caster-specific battle mechanics and options
-	// Example:
-	// - Cast Spell: Use Blaze to deal damage
-	// - Mana Shield: Restore mana points for future spellcasting
-	// - Defend: Increase magical defense for a turn
+void casterBattle(ch *player, ch *enemy) {
+	while (player->state.hp > 0 && enemy->state.hp > 0) {
+		displayChState(player);
+		displayChState(enemy);
+		// Caster-specific battle options
+		printf("Availabe Spells:\n");
+		printf("1. Cast Blaze\n");
+		printf("2. Replenish\n");
+		printf("3. Mana Shield\n");
+		printf("4. Mist\n");
+
+		int move;
+		printf("Enter your move: ");
+		scanf("%d", &move);
+
+		switch (move) {
+			// Cast Spell: Use Blaze to deal damage
+			case 1: {
+				printf("You cast a Blaze!\n");
+				// Simulate damage dealt by the player
+				int damage = (player->wisdom * player->state.lvl) + rollDice(10);
+				printf("You deal %d damage!\n", damage);
+				enemy->state.hp -= damage;
+				break;
+			}
+			// Replenish: Restore mana points for future spellcasting
+			case 2: {
+				printf("You concentrate and replenish you mana!\n");
+				// Simulate restoring mana points
+				player->state.mp += rollDice(20);
+				printf("Your Mana is replenished!\n");
+				break;
+			}
+			// Mana Shield: Increase magical defense for a turn
+			case 3: {
+				printf("You create a mana shield!\n");
+				// Simulate increased magical defense
+				player->state.hp += rollDice(10);
+				player->state.mp -= rollDice(10);
+			printf("Your magical defense increases!\n");
+				break;
+			}
+			// Mist: Attempt to escape the battle
+			case 4: {
+				printf("As the chaos ensues, you call upon the Mist spell in desperation!\n");
+				// Simulate the player attempting to run away
+				if (rollDice(20) > 10) {
+					printf("The mist envelops you, and you vanish into thin air, escaping the battle!\n");
+					return;
+				} else {
+					printf("The mist fails to conceal you, and you remain locked in battle!\n");
+					break;
+				}
+			}
+			default:
+				printf("Your mind races, trying to decide your next move in the heat of battle.\n");
+				break;
+		}
+	}
+	// Now, call the battle function for the enemy, and it will call the battle function for the player again... (until one of the HP reaches 0)
 }
